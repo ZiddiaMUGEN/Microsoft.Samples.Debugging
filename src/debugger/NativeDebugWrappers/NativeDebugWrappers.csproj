@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="amd64Context.cs" />
     <Compile Include="DumpReader.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ia64Context.cs" />
     <Compile Include="NativeImports.cs" />
     <Compile Include="context.cs" />

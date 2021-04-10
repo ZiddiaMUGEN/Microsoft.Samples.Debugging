@@ -696,20 +696,15 @@ namespace Microsoft.Samples.Debugging.Native
     /// The OS reserves bit 28 and may clear that for its own purposes</remarks>
     public enum ExceptionCode : uint
     {
-        None = 0x0, // included for completeness sake
-        STATUS_BREAKPOINT = 0x80000003,
-        STATUS_SINGLESTEP = 0x80000004,
-
-        EXCEPTION_INT_DIVIDE_BY_ZERO = 0xC0000094,
-
-        /// <summary>
-        /// Fired when debuggee gets a Control-C. 
-        /// </summary>
-        DBG_CONTROL_C = 0x40010005,
-
-        EXCEPTION_STACK_OVERFLOW = 0xC00000FD,
-        EXCEPTION_NONCONTINUABLE_EXCEPTION = 0xC0000025,
-        EXCEPTION_ACCESS_VIOLATION = 0xc0000005,
+        None = 0,
+        STATUS_WOW64_SINGLESTEP = 1073741854, // 0x4000001E
+        STATUS_WOW64_BREAKPOINT = 1073741855, // 0x4000001F
+        STATUS_BREAKPOINT = 2147483651, // 0x80000003
+        STATUS_SINGLESTEP = 2147483652, // 0x80000004
+        EXCEPTION_ACCESS_VIOLATION = 3221225477, // 0xC0000005
+        EXCEPTION_NONCONTINUABLE_EXCEPTION = 3221225509, // 0xC0000025
+        EXCEPTION_INT_DIVIDE_BY_ZERO = 3221225620, // 0xC0000094
+        EXCEPTION_STACK_OVERFLOW = 3221225725, // 0xC00000FD
     }
 
     /// <summary>
@@ -867,9 +862,15 @@ namespace Microsoft.Samples.Debugging.Native
                 val <<= 8;
                 val += buffer[i];
             }
-            IntPtr newptr = new IntPtr(unchecked((long)val));
+            try
+            {
+                IntPtr newptr = new IntPtr(unchecked((long)val));
 
-            return newptr;
+                return newptr;
+            } catch (System.OverflowException)
+            {
+                return IntPtr.Zero;
+            }
         }
 
 
